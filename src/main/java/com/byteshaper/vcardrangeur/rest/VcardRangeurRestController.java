@@ -1,7 +1,9 @@
 package com.byteshaper.vcardrangeur.rest;
 
+import com.byteshaper.vcardrangeur.domain.AddressBook;
 import com.byteshaper.vcardrangeur.exception.NotFoundException;
 import com.byteshaper.vcardrangeur.repository.VcardRepository;
+import com.byteshaper.vcardrangeur.service.VcardService;
 import io.swagger.annotations.ApiParam;
 import java.io.Serializable;
 import java.util.Collection;
@@ -17,6 +19,9 @@ public class VcardRangeurRestController {
 
     @Autowired
     private VcardRepository vcardRepository;
+    
+    @Autowired
+    private VcardService vcardService;
     
     @RequestMapping(            
             value = "/addressbooks",
@@ -42,5 +47,13 @@ public class VcardRangeurRestController {
             produces = "text/plain")
     public String getAddressbookRawContent(@ApiParam @PathVariable("key") String key) {
         return vcardRepository.find(key).orElseThrow(() -> new NotFoundException("No addressbook found for key: " + key));
+    }
+    
+    @RequestMapping(
+        value = "/addressbooks/{key}/json",
+        method = RequestMethod.GET,
+        produces = "application/json")
+    public AddressBook getAddressbookOriginal(@ApiParam @PathVariable("key") String key) {
+        return vcardService.getOriginal(key).orElseThrow(() -> new NotFoundException("No addressbook found for key: " + key));
     }
 }

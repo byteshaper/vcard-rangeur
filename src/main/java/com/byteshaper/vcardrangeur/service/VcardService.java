@@ -5,18 +5,15 @@ import static com.byteshaper.vcardrangeur.domain.Person.UNKNOWN_PROPERTY;
 import com.byteshaper.vcardrangeur.domain.AddressBook;
 import com.byteshaper.vcardrangeur.domain.Person;
 import com.byteshaper.vcardrangeur.domain.TelephoneNumber;
-import com.byteshaper.vcardrangeur.repository.VcardRepository;
 import ezvcard.Ezvcard;
 import ezvcard.VCard;
 import ezvcard.property.Nickname;
 import ezvcard.property.StructuredName;
 import ezvcard.property.Telephone;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,25 +23,18 @@ public class VcardService {
   
   private static final String NAME_FORMAT = "%s %s";
 
-  @Autowired
-  private VcardRepository vcardRepository;
+  public AddressBook getOriginal(String content) {
 
-  public Optional<AddressBook> getOriginal(String key) {
+    LOGGER.info("Trying to get persons for content");
 
-    Optional<String> content = vcardRepository.find(key);
-    LOGGER.info("Trying to get persons for key " + key);
-
-    if (content.isPresent()) {
       List<Person> persons = Ezvcard
-          .parse(content.get())
+          .parse(content)
           .all()
           .stream()
           .map(this::toAddress)
           .collect(Collectors.toList());
-      return Optional.of(new AddressBook(persons));
-    }
-
-    return Optional.empty();
+      
+      return new AddressBook(persons);
   }
   
   private Person toAddress(VCard vcard) {

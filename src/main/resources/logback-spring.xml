@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <logger name="org.springframework.web" level="WARN"/>
+
     <property name="LOG_PATH" value="." />
 
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="CUSTOMCONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%level %date - %logger{0}: %msg %n</pattern>
             <charset>utf8</charset>
         </encoder>
     </appender>
 
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="CUSTOMFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_PATH}/main.log</file>
         <encoder>
             <pattern>%level %date - %logger{0}: %message %n</pattern>
@@ -22,11 +25,10 @@
     </appender>
 
 
-    <logger name="com.byteshaper" level="INFO" />
-    <logger name="ch.qos.logback" level="WARN" />
+    <logger name="com.byteshaper" level="INFO" additivity="true" />
 
-    <root level="-DEBUG">
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE" />
+    <root level="INFO">
+        <appender-ref ref="CUSTOMCONSOLE" />
+        <appender-ref ref="CUSTOMFILE" />
     </root>
 </configuration>
